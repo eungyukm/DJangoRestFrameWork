@@ -9,12 +9,10 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         email = self.normalize_email(email)
 
-        user = self.model(
-            email=email,
-            **extra_fields
-        )
+        user = self.model(email=email, **extra_fields)
 
         user.set_password(password)
+
         user.save()
 
         return user
@@ -23,11 +21,11 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
-        if extra_fields.get("ist_staff") is not True:
+        if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser has to have is_staff being True")
 
-        if extra_fields.get("ist_superuser") is not True:
-            raise ValueError("Superuser has to have is_staff being True")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser has to have is_superuser being True")
 
         return self.create_user(email=email, password=password, **extra_fields)
 
@@ -35,7 +33,7 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     email = models.CharField(max_length=80, unique=True)
     username = models.CharField(max_length=45)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, auto_now_add=True)
 
     objects = CustomUserManager()
     USERNAME_FIELD = "email"

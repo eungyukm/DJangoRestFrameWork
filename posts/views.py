@@ -9,6 +9,8 @@ from .models import Post
 from .serializers import PostSerializer
 from rest_framework import serializers
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+
 
 # posts = [
 #     {
@@ -31,6 +33,7 @@ from django.shortcuts import render
 
 class PostListCreateView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
 
     def get(self, request: Request, *args, **kwargs):
