@@ -10,6 +10,14 @@ from .serializers import PostSerializer
 from rest_framework import serializers
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
+from accounts.serializers import CurrentUserPostsSerializer
+from rest_framework.decorators import APIView, api_view, permission_classes
+from rest_framework.permissions import (
+    IsAuthenticated,
+    AllowAny,
+    IsAuthenticatedOrReadOnly,
+    IsAdminUser,
+)
 
 
 # posts = [
@@ -35,6 +43,11 @@ class PostListCreateView(generics.GenericAPIView, mixins.ListModelMixin, mixins.
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(author=user)
+        return super().perform_create(serializer)
 
     def get(self, request: Request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -202,3 +215,16 @@ def delete_post(request: Request, post_id: int):
     post.delete()
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(http_method_names=['GET'])
+@permission_classes([IsAuthenticated])
+def get_posts_for_current_user(request: Request):
+    user = request.user
+
+    serializer = CurrentUserPostsSerializer(instance=user)
+
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
