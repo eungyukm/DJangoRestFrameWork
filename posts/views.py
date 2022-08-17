@@ -152,7 +152,7 @@ def homepage(request):
     print(x2, y2)
 
     # WGS84 -> UTM-K 샘플
-    x1, y1 = 37.24334613514286, 131.86684209371853
+    x1, y1 = 37.243260725805115, 131.86686355139034
     y2, x2 = transform(proj_WGS84, proj_UTMK, y1, x1)
     print(x2, y2)
 
@@ -180,9 +180,6 @@ def converterToCbc(Latitude, hardness):
     intWP = int(wp)
     intHP = int(hp)
 
-    print(wp[intWP])
-    print(hp[intHP])
-
     first_number = int((Latitude % 100000) / 10)
     second_number = int((hardness % 100000) / 10)
     # print(first_number)
@@ -192,7 +189,8 @@ def converterToCbc(Latitude, hardness):
     h_dict = {13: "가", 14: "나", 15: "다", 16: "라",
               17: "마", 18: "바", 19: "사", 20: "아"}
 
-    code = str(w_dict[intWP]) + str(h_dict[intHP])
+    code = h_dict[intWP] + w_dict[intHP] + ' ' + \
+        str(first_number) + ' ' + str(second_number)
 
     # print(code)
     return code
